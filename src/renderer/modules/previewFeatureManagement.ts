@@ -16,12 +16,6 @@ const PREVIEW_FEATURE_DEFINITIONS: PreviewFeatureDefinition[] = [
         description: "Shows the MCP Server activity in the sidebar.",
         targetElementIds: ["mcp-btn"],
     },
-    {
-        id: PREVIEW_FEATURE_IDS.POWER_PLATFORM_API,
-        label: "Power Platform API",
-        description: "Shows Power Platform API options in connection add/edit flows.",
-        targetElementIds: [],
-    },
 ];
 
 let activePreviewFeatureFlags: Record<PreviewFeatureId, boolean> = buildPreviewFeatureFlags();

@@ -5,7 +5,6 @@
 
 import { logDebug, logError, logInfo, logWarn } from "../../common/logger";
 import type { Connection, ConnectionsSortOption, ModalWindowClosedPayload, ModalWindowMessagePayload, UIConnectionData } from "../../common/types";
-import { PREVIEW_FEATURE_IDS } from "../../common/types";
 import { parseConnectionString } from "../../common/types/connection";
 import { getAddConnectionModalControllerScript } from "../modals/addConnection/controller";
 import { getAddConnectionModalView } from "../modals/addConnection/view";
@@ -26,7 +25,6 @@ import {
     sendBrowserWindowModalMessage,
     showBrowserWindowModal,
 } from "./browserWindowModals";
-import { isPreviewFeatureEnabled } from "./previewFeatureManagement";
 
 type ConnectionEnvironment = "Dev" | "Test" | "UAT" | "Production";
 type ConnectionAuthenticationType = "interactive" | "clientSecret" | "usernamePassword" | "connectionString";
@@ -259,10 +257,9 @@ function handleAddConnectionModalMessage(payload: ModalWindowMessagePayload): vo
 
 function buildAddConnectionModalHtml(): string {
     const isDarkTheme = document.body.classList.contains("dark-theme");
-    const isPowerPlatformApiPreviewEnabled = isPreviewFeatureEnabled(PREVIEW_FEATURE_IDS.POWER_PLATFORM_API);
     const themeClass = isDarkTheme ? "dark-theme" : "light-theme";
     const { styles, body } = getAddConnectionModalView(isDarkTheme);
-    const script = getAddConnectionModalControllerScript(ADD_CONNECTION_MODAL_CHANNELS, isPowerPlatformApiPreviewEnabled);
+    const script = getAddConnectionModalControllerScript(ADD_CONNECTION_MODAL_CHANNELS);
     // Inject theme class into body tag
     const bodyWithTheme = body.replace("<body>", `<body class="${themeClass}">`);
     return `${styles}\n${bodyWithTheme}\n${script}`.trim();
@@ -1070,13 +1067,12 @@ function handleEditConnectionModalMessage(payload: ModalWindowMessagePayload): v
 
 function buildEditConnectionModalHtml(): string {
     const isDarkTheme = document.body.classList.contains("dark-theme");
-    const isPowerPlatformApiPreviewEnabled = isPreviewFeatureEnabled(PREVIEW_FEATURE_IDS.POWER_PLATFORM_API);
 
     logDebug("Building edit connection modal HTML", { isDarkTheme });
 
     const themeClass = isDarkTheme ? "dark-theme" : "light-theme";
     const { styles, body } = getEditConnectionModalView(isDarkTheme);
-    const script = getEditConnectionModalControllerScript(EDIT_CONNECTION_MODAL_CHANNELS, isPowerPlatformApiPreviewEnabled);
+    const script = getEditConnectionModalControllerScript(EDIT_CONNECTION_MODAL_CHANNELS);
     // Inject theme class into body tag
     const bodyWithTheme = body.replace("<body>", `<body class="${themeClass}">`);
     return `${styles}\n${bodyWithTheme}\n${script}`.trim();

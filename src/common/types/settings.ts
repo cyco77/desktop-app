@@ -32,7 +32,6 @@ export type ToolDisplayMode = "standard" | "compact";
 
 export const PREVIEW_FEATURE_IDS = {
     MCP_SERVER: "mcp-server",
-    POWER_PLATFORM_API: "power-platform-api",
 } as const;
 
 export type PreviewFeatureId = (typeof PREVIEW_FEATURE_IDS)[keyof typeof PREVIEW_FEATURE_IDS];
@@ -40,7 +39,6 @@ export type PreviewFeatureFlags = Partial<Record<PreviewFeatureId, boolean>>;
 
 export const PREVIEW_FEATURE_DEFAULTS: Record<PreviewFeatureId, boolean> = {
     [PREVIEW_FEATURE_IDS.MCP_SERVER]: false,
-    [PREVIEW_FEATURE_IDS.POWER_PLATFORM_API]: false,
 };
 
 /**
