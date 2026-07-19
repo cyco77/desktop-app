@@ -1,6 +1,7 @@
+import { randomBytes } from "crypto";
 import Store from "electron-store";
 import { CspConsentRecord, LastUsedToolConnectionInfo, LastUsedToolEntry, LastUsedToolUpdate, ToolSettings, UserSettings } from "../../common/types";
-import { randomBytes } from "crypto";
+import { buildPreviewFeatureFlags } from "../../common/types/settings";
 
 /**
  * Generates a random authentication token for MCP server access
@@ -39,13 +40,31 @@ export class SettingsManager {
                 connectionsSort: "last-used",
                 restoreSessionOnStartup: true, // Reopen previously open tools on app start
                 enablePreviewFeatures: false, // Show preview/experimental features in the UI
+                previewFeatures: buildPreviewFeatureFlags(), // Per-feature preview toggles
             },
         });
+
+        this.migratePreviewFeatureSettings();
 
         this.toolSettingsStore = new Store<{ [toolId: string]: ToolSettings }>({
             name: "tool-settings",
             defaults: {},
         });
+    }
+
+    /**
+     * Migrate legacy global preview toggle into per-feature flags while preserving
+     * existing per-feature settings for users already on newer versions.
+     */
+    private migratePreviewFeatureSettings(): void {
+        const legacyEnablePreviewFeatures = this.store.get("enablePreviewFeatures");
+        const currentPreviewFeatures = this.store.get("previewFeatures");
+        const normalizedPreviewFeatures = buildPreviewFeatureFlags(currentPreviewFeatures, typeof legacyEnablePreviewFeatures === "boolean" ? legacyEnablePreviewFeatures : undefined);
+
+        this.store.set("previewFeatures", normalizedPreviewFeatures);
+
+        const hasAnyPreviewFeatureEnabled = Object.values(normalizedPreviewFeatures).some((enabled) => enabled === true);
+        this.store.set("enablePreviewFeatures", hasAnyPreviewFeatureEnabled);
     }
 
     /**

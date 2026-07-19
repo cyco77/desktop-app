@@ -2,6 +2,8 @@
  * Renderer-specific type definitions
  */
 
+import type { PreviewFeatureFlags } from "../../common/types";
+
 /**
  * Interface for an open tool instance
  */
@@ -63,6 +65,7 @@ export interface SettingsState {
     categoryColorThickness?: number;
     environmentColorThickness?: number;
     enablePreviewFeatures?: boolean;
+    previewFeatures?: PreviewFeatureFlags;
 }
 
 /**

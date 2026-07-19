@@ -30,6 +30,42 @@ export type DeprecatedToolsVisibility = "hide-all" | "show-all" | "show-installe
  */
 export type ToolDisplayMode = "standard" | "compact";
 
+export const PREVIEW_FEATURE_IDS = {
+    MCP_SERVER: "mcp-server",
+    POWER_PLATFORM_API: "power-platform-api",
+} as const;
+
+export type PreviewFeatureId = (typeof PREVIEW_FEATURE_IDS)[keyof typeof PREVIEW_FEATURE_IDS];
+export type PreviewFeatureFlags = Partial<Record<PreviewFeatureId, boolean>>;
+
+export const PREVIEW_FEATURE_DEFAULTS: Record<PreviewFeatureId, boolean> = {
+    [PREVIEW_FEATURE_IDS.MCP_SERVER]: false,
+    [PREVIEW_FEATURE_IDS.POWER_PLATFORM_API]: false,
+};
+
+/**
+ * Returns a normalized preview-feature map that always includes all known feature IDs.
+ * If an override value is missing for a feature, the legacy fallback (when provided)
+ * is used first, then the feature's default value.
+ */
+export function buildPreviewFeatureFlags(overrides?: PreviewFeatureFlags, legacyFallback?: boolean): Record<PreviewFeatureId, boolean> {
+    const normalized = { ...PREVIEW_FEATURE_DEFAULTS };
+
+    (Object.keys(PREVIEW_FEATURE_DEFAULTS) as PreviewFeatureId[]).forEach((featureId) => {
+        const overrideValue = overrides?.[featureId];
+        if (typeof overrideValue === "boolean") {
+            normalized[featureId] = overrideValue;
+            return;
+        }
+
+        if (typeof legacyFallback === "boolean") {
+            normalized[featureId] = legacyFallback;
+        }
+    });
+
+    return normalized;
+}
+
 export interface LastUsedToolConnectionInfo {
     id: string | null;
     name?: string;
@@ -97,4 +133,5 @@ export interface UserSettings {
     mcpAccessToken?: string; // Access token for local MCP server authentication
     splitDividerRatio?: number; // Persisted position of the split-pane divider (0.15–0.85)
     enablePreviewFeatures?: boolean; // Show preview/experimental features in the UI
+    previewFeatures?: PreviewFeatureFlags; // Per-feature preview toggles keyed by preview feature ID
 }

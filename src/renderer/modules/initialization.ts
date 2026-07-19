@@ -31,7 +31,7 @@ import { clearMarketplaceDropdownFilters, handleProtocolInstallToolRequest, load
 import { openAgentInvocationLogsTab } from "./mcpManagement";
 import { closeModal, openModal } from "./modalManagement";
 import { initNotificationHistoryPanel, setDefaultNotificationDuration, showPPTBNotification } from "./notifications";
-import { applyPreviewFeaturesVisibility } from "./previewFeatureManagement";
+import { applyPreviewFeaturesVisibility, normalizePreviewFeatureFlags } from "./previewFeatureManagement";
 import { openSettingsTab } from "./settingsManagement";
 import { switchSidebar } from "./sidebarManagement";
 import { handleTerminalClosed, handleTerminalCommandCompleted, handleTerminalCreated, handleTerminalError, handleTerminalOutput, setupTerminalPanel } from "./terminalManagement";
@@ -647,7 +647,7 @@ async function loadInitialSettings(): Promise<void> {
     applyTheme(settings.theme);
     applyTerminalFont(settings.terminalFont || DEFAULT_TERMINAL_FONT);
     applyDebugMenuVisibility(settings.showDebugMenu ?? false);
-    applyPreviewFeaturesVisibility(settings.enablePreviewFeatures ?? false);
+    applyPreviewFeaturesVisibility(normalizePreviewFeatureFlags(settings));
     setDefaultNotificationDuration(settings.notificationDuration ?? DEFAULT_NOTIFICATION_DURATION);
     applyAppearanceSettings(
         settings.showCategoryColor ?? DEFAULT_SHOW_CATEGORY_COLOR,

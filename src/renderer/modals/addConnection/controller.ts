@@ -9,12 +9,14 @@ export interface AddConnectionModalChannelIds {
 /**
  * Returns the controller script that wires up DOM events for the add connection modal.
  */
-export function getAddConnectionModalControllerScript(channels: AddConnectionModalChannelIds): string {
+export function getAddConnectionModalControllerScript(channels: AddConnectionModalChannelIds, enablePowerPlatformApiPreview: boolean): string {
     const serializedChannels = JSON.stringify(channels);
+    const serializedEnablePowerPlatformApiPreview = JSON.stringify(enablePowerPlatformApiPreview);
     return `
 <script>
 (async () => {
     const CHANNELS = ${serializedChannels};
+    const enablePowerPlatformApiPreview = ${serializedEnablePowerPlatformApiPreview};
     const modalBridge = window.modalBridge;
     if (!modalBridge) {
         console.warn("modalBridge API is unavailable");
@@ -77,6 +79,31 @@ export function getAddConnectionModalControllerScript(channels: AddConnectionMod
         if (usernamePasswordClientIdLabel) {
             usernamePasswordClientIdLabel.textContent = requiresClientId ? "Client ID (Required for Power Platform API)" : "Client ID (Optional)";
         }
+    };
+
+    const applyPowerPlatformApiPreviewVisibility = () => {
+        if (enablePowerPlatformApiPreview) {
+            return;
+        }
+
+        document.querySelectorAll('[id="power-platform-api-wrapper"]').forEach((element) => {
+            if (element instanceof HTMLElement) {
+                element.style.display = "none";
+            }
+        });
+
+        document.querySelectorAll('[id="power-platform-api-help"]').forEach((element) => {
+            if (element instanceof HTMLElement) {
+                element.style.display = "none";
+            }
+        });
+
+        document.querySelectorAll('[id="connection-enabled-for-powerplatform-api"]').forEach((element) => {
+            if (element instanceof HTMLInputElement) {
+                element.checked = false;
+                element.disabled = true;
+            }
+        });
     };
 
     const loadBrowserProfiles = async () => {
@@ -230,6 +257,7 @@ export function getAddConnectionModalControllerScript(channels: AddConnectionMod
     updateAuthVisibility();
 
     ppApiCheckbox?.addEventListener("change", updatePowerPlatformClientIdRequirement);
+    applyPowerPlatformApiPreviewVisibility();
     updatePowerPlatformClientIdRequirement();
 
     // Environment default colors per env type
