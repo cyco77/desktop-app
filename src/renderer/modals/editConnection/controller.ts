@@ -1,3 +1,5 @@
+import { getModalFeedbackScriptHelpers } from "../feedbackScript";
+
 export interface EditConnectionModalChannelIds {
     submit: string;
     submitReady: string;
@@ -160,13 +162,19 @@ export function getEditConnectionModalControllerScript(channels: EditConnectionM
         }
     };
 
-    const updateTestFeedback = (message) => {
+    ${getModalFeedbackScriptHelpers()}
+
+    const updateTestFeedback = (data) => {
         if (!testFeedback) return;
+        const message = getFeedbackMessage(data);
         if (typeof message === "string" && message.trim().length > 0) {
+            const feedbackType = getFeedbackType(data);
             testFeedback.textContent = message;
+            testFeedback.className = "modal-feedback " + feedbackType;
             testFeedback.style.display = "block";
         } else {
             testFeedback.textContent = "";
+            testFeedback.className = "modal-feedback";
             testFeedback.style.display = "none";
         }
     };
@@ -533,7 +541,7 @@ export function getEditConnectionModalControllerScript(channels: EditConnectionM
             setButtonState(testButton, false, "", "Test Connection");
         }
         if (payload.channel === CHANNELS.testFeedback) {
-            updateTestFeedback(typeof payload.data === "string" ? payload.data : "");
+            updateTestFeedback(payload.data);
         }
         if (payload.channel === CHANNELS.populateConnection) {
             populateFormData(payload.data);

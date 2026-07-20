@@ -995,9 +995,9 @@ async function handleTestConnectionRequest(formPayload?: ConnectionFormPayload):
         const result = await window.toolboxAPI.connections.test(testConn);
         if (result.success) {
             if (editingConnectionId !== null) {
-                await setEditConnectionTestFeedback("Connection test succeeded.");
+                await setEditConnectionTestFeedback("Connection test succeeded.", "success");
             } else {
-                await setAddConnectionTestFeedback("Connection test succeeded.");
+                await setAddConnectionTestFeedback("Connection test succeeded.", "success");
             }
         } else {
             if (editingConnectionId !== null) {
@@ -1149,8 +1149,11 @@ async function signalEditConnectionTestReady(): Promise<void> {
     await sendBrowserWindowModalMessage({ channel: EDIT_CONNECTION_MODAL_CHANNELS.testReady });
 }
 
-async function setEditConnectionTestFeedback(message?: string): Promise<void> {
-    await sendBrowserWindowModalMessage({ channel: EDIT_CONNECTION_MODAL_CHANNELS.testFeedback, data: message ?? "" });
+async function setEditConnectionTestFeedback(message?: string, type: "success" | "error" = "error"): Promise<void> {
+    await sendBrowserWindowModalMessage({
+        channel: EDIT_CONNECTION_MODAL_CHANNELS.testFeedback,
+        data: message ? { message, type } : "",
+    });
 }
 
 /**
@@ -1759,8 +1762,11 @@ async function signalAddConnectionTestReady(): Promise<void> {
     await sendBrowserWindowModalMessage({ channel: ADD_CONNECTION_MODAL_CHANNELS.testReady });
 }
 
-async function setAddConnectionTestFeedback(message?: string): Promise<void> {
-    await sendBrowserWindowModalMessage({ channel: ADD_CONNECTION_MODAL_CHANNELS.testFeedback, data: message ?? "" });
+async function setAddConnectionTestFeedback(message?: string, type: "success" | "error" = "error"): Promise<void> {
+    await sendBrowserWindowModalMessage({
+        channel: ADD_CONNECTION_MODAL_CHANNELS.testFeedback,
+        data: message ? { message, type } : "",
+    });
 }
 
 let activeConnectionContextMenu: { menu: HTMLElement; anchor: HTMLElement; cleanup: () => void } | null = null;
