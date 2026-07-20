@@ -198,9 +198,9 @@ export function getModalStyles(isDarkTheme: boolean): string {
         display: none;
         padding: 10px 12px;
         border-radius: 8px;
-        border: 1px solid rgba(16, 124, 16, 0.35);
-        background: rgba(16, 124, 16, 0.12);
-        color: ${isDarkTheme ? "#9fd89f" : "#0f6c0f"};
+        border: 1px solid ${isDarkTheme ? "rgba(255, 255, 255, 0.12)" : "rgba(0, 0, 0, 0.12)"};
+        background: ${isDarkTheme ? "rgba(255, 255, 255, 0.04)" : "rgba(0, 0, 0, 0.04)"};
+        color: ${isDarkTheme ? "rgba(255, 255, 255, 0.85)" : "rgba(0, 0, 0, 0.85)"};
         font-size: 13px;
         line-height: 1.4;
     }

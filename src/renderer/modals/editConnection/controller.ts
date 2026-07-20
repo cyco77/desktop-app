@@ -1,3 +1,5 @@
+import { getModalFeedbackScriptHelpers } from "../feedbackScript";
+
 export interface EditConnectionModalChannelIds {
     submit: string;
     submitReady: string;
@@ -160,23 +162,13 @@ export function getEditConnectionModalControllerScript(channels: EditConnectionM
         }
     };
 
+    ${getModalFeedbackScriptHelpers()}
+
     const updateTestFeedback = (data) => {
         if (!testFeedback) return;
-        const message =
-            typeof data === "string"
-                ? data
-                : data && typeof data === "object" && typeof data.message === "string"
-                  ? data.message
-                  : "";
+        const message = getFeedbackMessage(data);
         if (typeof message === "string" && message.trim().length > 0) {
-            const feedbackType =
-                data && typeof data === "object" && data.type === "error"
-                    ? "error"
-                    : data && typeof data === "object" && data.type === "success"
-                      ? "success"
-                      : message === "Connection test succeeded."
-                        ? "success"
-                        : "error";
+            const feedbackType = getFeedbackType(data);
             testFeedback.textContent = message;
             testFeedback.className = "modal-feedback " + feedbackType;
             testFeedback.style.display = "block";
