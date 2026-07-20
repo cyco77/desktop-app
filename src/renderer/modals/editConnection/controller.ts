@@ -87,6 +87,12 @@ export function getEditConnectionModalControllerScript(channels: EditConnectionM
         }
     };
 
+    const confirmPowerPlatformApiConsent = () => {
+        return window.confirm(
+            "Power Platform API access requires admin-approved privileges and a properly configured Client ID. If required privileges are missing, tools may not work as expected. By selecting Agree, you confirm it is your responsibility to configure the Client ID and privileges correctly. Select OK to Agree, or Cancel to keep this option disabled.",
+        );
+    };
+
     const loadBrowserProfiles = async () => {
         const browserType = browserTypeSelect?.value || "default";
         
@@ -373,7 +379,15 @@ export function getEditConnectionModalControllerScript(channels: EditConnectionM
     authTypeSelect?.addEventListener("change", updateAuthVisibility);
     updateAuthVisibility();
 
-    ppApiCheckbox?.addEventListener("change", updatePowerPlatformClientIdRequirement);
+    ppApiCheckbox?.addEventListener("change", () => {
+        if (ppApiCheckbox instanceof HTMLInputElement && ppApiCheckbox.checked) {
+            const agreed = confirmPowerPlatformApiConsent();
+            if (!agreed) {
+                ppApiCheckbox.checked = false;
+            }
+        }
+        updatePowerPlatformClientIdRequirement();
+    });
     updatePowerPlatformClientIdRequirement();
 
     // Environment color picker setup
