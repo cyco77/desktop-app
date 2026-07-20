@@ -198,11 +198,23 @@ export function getModalStyles(isDarkTheme: boolean): string {
         display: none;
         padding: 10px 12px;
         border-radius: 8px;
-        border: 1px solid rgba(255, 77, 109, 0.35);
-        background: rgba(255, 77, 109, 0.12);
-        color: #ffb3c1;
+        border: 1px solid rgba(16, 124, 16, 0.35);
+        background: rgba(16, 124, 16, 0.12);
+        color: ${isDarkTheme ? "#9fd89f" : "#0f6c0f"};
         font-size: 13px;
         line-height: 1.4;
+    }
+
+    .modal-feedback.success {
+        border-color: rgba(16, 124, 16, 0.35);
+        background: rgba(16, 124, 16, 0.12);
+        color: ${isDarkTheme ? "#9fd89f" : "#0f6c0f"};
+    }
+
+    .modal-feedback.error {
+        border-color: rgba(255, 77, 109, 0.35);
+        background: rgba(255, 77, 109, 0.12);
+        color: ${isDarkTheme ? "#ffb3c1" : "#a4262c"};
     }
 
     .modal-warning {

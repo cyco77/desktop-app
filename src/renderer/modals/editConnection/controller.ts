@@ -160,13 +160,29 @@ export function getEditConnectionModalControllerScript(channels: EditConnectionM
         }
     };
 
-    const updateTestFeedback = (message) => {
+    const updateTestFeedback = (data) => {
         if (!testFeedback) return;
+        const message =
+            typeof data === "string"
+                ? data
+                : data && typeof data === "object" && typeof data.message === "string"
+                  ? data.message
+                  : "";
         if (typeof message === "string" && message.trim().length > 0) {
+            const feedbackType =
+                data && typeof data === "object" && data.type === "error"
+                    ? "error"
+                    : data && typeof data === "object" && data.type === "success"
+                      ? "success"
+                      : message === "Connection test succeeded."
+                        ? "success"
+                        : "error";
             testFeedback.textContent = message;
+            testFeedback.className = "modal-feedback " + feedbackType;
             testFeedback.style.display = "block";
         } else {
             testFeedback.textContent = "";
+            testFeedback.className = "modal-feedback";
             testFeedback.style.display = "none";
         }
     };
@@ -533,7 +549,7 @@ export function getEditConnectionModalControllerScript(channels: EditConnectionM
             setButtonState(testButton, false, "", "Test Connection");
         }
         if (payload.channel === CHANNELS.testFeedback) {
-            updateTestFeedback(typeof payload.data === "string" ? payload.data : "");
+            updateTestFeedback(payload.data);
         }
         if (payload.channel === CHANNELS.populateConnection) {
             populateFormData(payload.data);
