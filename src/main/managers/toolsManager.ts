@@ -375,9 +375,7 @@ export class ToolManager extends EventEmitter {
                 fs.rmSync(toolPath, { recursive: true, force: true });
             }
         } else if (tool?.localPath) {
-            if (fs.existsSync(tool.localPath)) {
-                fs.rmSync(tool.localPath, { recursive: true, force: true });
-            }
+            // Do not delete local development tools, just unload them
         } else {
             await this.registryManager.uninstallTool(toolId);
         }
