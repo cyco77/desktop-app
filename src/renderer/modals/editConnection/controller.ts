@@ -33,6 +33,8 @@ export function getEditConnectionModalControllerScript(channels: EditConnectionM
     const saveButton = document.getElementById("confirm-connection-btn");
     const testFeedback = document.getElementById("connection-test-feedback");
     const ppApiCheckbox = document.getElementById("connection-enabled-for-powerplatform-api");
+    const ppApiWrapper = document.getElementById("power-platform-api-wrapper");
+    const ppApiHelp = document.getElementById("power-platform-api-help");
     const browserTypeSelect = document.getElementById("connection-browser-type");
     const browserProfileSelect = document.getElementById("connection-browser-profile");
     const browserWarning = document.getElementById("browser-not-installed-warning");
@@ -40,6 +42,7 @@ export function getEditConnectionModalControllerScript(channels: EditConnectionM
     const usernamePasswordClientIdInput = document.getElementById("connection-optional-client-id-up");
     const interactiveClientIdLabel = document.getElementById("connection-optional-client-id-label");
     const usernamePasswordClientIdLabel = document.getElementById("connection-optional-client-id-up-label");
+    const supportsPowerPlatformApi = (authType) => authType === "interactive" || authType === "usernamePassword";
     const getBrowserProfileSelection = () => {
         const select = browserProfileSelect instanceof HTMLSelectElement ? browserProfileSelect : null;
         if (!select) {
@@ -64,11 +67,18 @@ export function getEditConnectionModalControllerScript(channels: EditConnectionM
 
     const updateAuthVisibility = () => {
         const authType = authTypeSelect?.value || "interactive";
+        const showPowerPlatformApiOption = supportsPowerPlatformApi(authType);
         if (interactiveFields) interactiveFields.style.display = authType === "interactive" ? "flex" : "none";
         if (clientSecretFields) clientSecretFields.style.display = authType === "clientSecret" ? "flex" : "none";
         if (usernamePasswordFields) usernamePasswordFields.style.display = authType === "usernamePassword" ? "flex" : "none";
         if (connectionStringFields) connectionStringFields.style.display = authType === "connectionString" ? "flex" : "none";
         if (testButton) testButton.style.display = (authType === "interactive" || authType === "connectionString") ? "none" : "inline-flex";
+        if (ppApiWrapper) ppApiWrapper.style.display = showPowerPlatformApiOption ? "" : "none";
+        if (ppApiHelp) ppApiHelp.style.display = showPowerPlatformApiOption ? "" : "none";
+        if (!showPowerPlatformApiOption && ppApiCheckbox instanceof HTMLInputElement) {
+            ppApiCheckbox.checked = false;
+        }
+        updatePowerPlatformClientIdRequirement();
     };
 
     const updatePowerPlatformClientIdRequirement = () => {
